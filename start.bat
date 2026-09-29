@@ -1,5 +1,5 @@
 @echo off
-echo Starting AI Voice Sales Agent...
+echo Starting Voxen...
 echo.
 
 @REM # Before running your start.bat, use:

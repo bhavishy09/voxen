@@ -5,7 +5,7 @@ def test_api():
     """Test the API endpoints"""
     base_url = "http://localhost:8000"
     
-    print(" Testing AI Voice Sales Agent API...")
+    print(" Testing Voxen API...")
     
     # Test 1: Start call
     print("\n1. Testing start call...")

@@ -9,7 +9,7 @@ import uuid
 from datetime import datetime
 from typing import Dict
 
-app = FastAPI(title="AI Voice Sales Agent")
+app = FastAPI(title="Voxen")
 
 # Add CORS middleware
 app.add_middleware(
@@ -208,7 +208,7 @@ async def root():
 
 @app.get("/api")
 async def api_info():
-    return {"message": "AI Voice Sales Agent API", "docs": "/docs"}
+    return {"message": "Voxen API", "docs": "/docs"}
 
 @app.get("/rag-status")
 async def get_rag_status():
