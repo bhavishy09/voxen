@@ -1,1 +1,47 @@
+# Virtual Environments
+venv/
+.venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# Python byte-compiled files & caches
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+
+# Environment variables & secrets
 .env
+.env.*
+!.env.example
+
+# Audio & Temporary Media files
+*.mp3
+*.wav
+*.m4a
+*.ogg
+
+# Logs and databases
+*.log
+*.sqlite
+*.sqlite3
+*.db
+
+# Operating System files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE and Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
