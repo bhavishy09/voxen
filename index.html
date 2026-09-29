@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Voice Sales Agent</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 500px;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+        input:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+        .controls {
+            text-align: center;
+            margin: 20px 0;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        .mode-selector {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+        }
+        .mode-selector h4 {
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+        .mode-options {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        .mode-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .mode-option input[type="radio"] {
+            width: auto;
+            margin: 0;
+        }
+        .mode-option label {
+            margin: 0;
+            font-weight: normal;
+            cursor: pointer;
+        }
+        #status {
+            text-align: center;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .chatbox {
+            margin-top: 20px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .chat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        .chat-header h3 {
+            margin: 0;
+            color: #333;
+        }
+        .clear-btn {
+            background-color: #dc3545;
+            color: white;
+            padding: 6px 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .clear-btn:hover {
+            background-color: #c82333;
+        }
+        .chat-messages {
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 15px;
+            min-height: 150px;
+        }
+        .message {
+            margin-bottom: 10px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            max-width: 80%;
+            word-wrap: break-word;
+        }
+        .agent {
+            background-color: #e3f2fd;
+            text-align: left;
+            margin-right: auto;
+        }
+        .customer {
+            background-color: #e8f5e8;
+            text-align: right;
+            margin-left: auto;
+        }
+        .chat-input-area {
+            display: flex;
+            padding: 15px;
+            border-top: 1px solid #eee;
+            gap: 10px;
+        }
+        .chat-input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            outline: none;
+            font-size: 14px;
+        }
+        .chat-input:focus {
+            border-color: #007bff;
+        }
+        .send-btn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+        .send-btn:hover {
+            background-color: #0056b3;
+        }
+        .send-btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        .conversation {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            max-height: 400px;
+            overflow-y: auto;
+            display: none;
+        }
+        
+        /* Responsive design */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+                margin: 0;
+                min-height: 100vh;
+            }
+            .container {
+                padding: 15px;
+                max-width: 100%;
+            }
+            .mode-options {
+                flex-direction: column;
+            }
+            button {
+                padding: 10px 15px;
+                margin: 5px 2px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎤 AI Voice Sales Agent</h1>
+        
+        <div class="form-group">
+            <label for="customerName">Customer Name:</label>
+            <input type="text" id="customerName" placeholder="Enter customer name" value="John Doe">
+        </div>
+        
+        <div class="form-group">
+            <label for="phoneNumber">Phone Number:</label>
+            <input type="text" id="phoneNumber" placeholder="Enter phone number" value="+1234567890">
+        </div>
+        
+        <div class="controls">
+            <button onclick="startCall()">📞 Start Call</button>
+            <button onclick="simulateResponse()" id="simulateBtn" disabled>🎙️ Simulate Voice Response</button>
+            <button onclick="endCall()" id="endBtn" disabled>📴 End Call</button>
+        </div>
+        
+        <div id="modeSelector" class="mode-selector" style="display: none;">
+            <h4>🤖 AI Response Mode</h4>
+            <div class="mode-options">
+                <div class="mode-option">
+                    <input type="radio" id="customMode" name="responseMode" value="custom" checked>
+                    <label for="customMode">📝 Custom Sales Responses (Rule-based)</label>
+                </div>
+                <div class="mode-option">
+                    <input type="radio" id="ragMode" name="responseMode" value="rag">
+                    <label for="ragMode">🧠 RAG System (AI Knowledge Base)</label>
+                </div>
+            </div>
+        </div>
+        
+        <div id="status"></div>
+        
+        <div id="chatbox" class="chatbox" style="display: none;">
+            <div class="chat-header">
+                <h3>💬 Chat with AI Agent</h3>
+                <button onclick="clearChatHistory()" class="clear-btn">🗑️ Clear History</button>
+            </div>
+            <div id="chatMessages" class="chat-messages"></div>
+            <div class="chat-input-area">
+                <input type="text" id="chatInput" class="chat-input" placeholder="Type your response here..." disabled>
+                <button onclick="sendChatMessage()" id="sendBtn" class="send-btn" disabled>📤</button>
+            </div>
+        </div>
+        
+        <div id="conversation" class="conversation" style="display: none;">
+            <h3>📋 Conversation History</h3>
+            <div id="messages"></div>
+        </div>
+    </div>
+
+    <script>
+        let currentCallId = null;
+        
+        function updateStatus(message, type = 'info') {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.style.backgroundColor = type === 'error' ? '#ffebee' : '#e8f5e8';
+            status.style.color = type === 'error' ? '#c62828' : '#2e7d32';
+        }
+        
+        async function startCall() {
+            const customerName = document.getElementById('customerName').value;
+            const phoneNumber = document.getElementById('phoneNumber').value;
+            
+            if (!customerName || !phoneNumber) {
+                updateStatus('Please enter customer name and phone number', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/start-call', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        customer_name: customerName,
+                        phone_number: phoneNumber
+                    })
+                });
+                
+                const data = await response.json();
+                currentCallId = data.call_id;
+                
+                updateStatus(`Call started with ${customerName}`);
+                document.getElementById('simulateBtn').disabled = false;
+                document.getElementById('endBtn').disabled = false;
+                document.getElementById('chatInput').disabled = false;
+                document.getElementById('sendBtn').disabled = false;
+                document.getElementById('modeSelector').style.display = 'block';
+                document.getElementById('chatbox').style.display = 'block';
+                
+                addChatMessage('agent', data.first_message);
+                
+            } catch (error) {
+                updateStatus('Error starting call: ' + error.message, 'error');
+            }
+        }
+        
+        async function simulateResponse() {
+            if (!currentCallId) return;
+            
+            const customerInput = prompt('Simulate customer speech input:');
+            if (!customerInput) {
+                updateStatus('No input provided');
+                return;
+            }
+            
+            updateStatus('Processing simulated voice input...');
+            
+            try {
+                const selectedMode = document.querySelector('input[name="responseMode"]:checked').value;
+                const endpoint = selectedMode === 'rag' 
+                    ? `/rag-respond/${currentCallId}` 
+                    : `/respond/${currentCallId}`;
+                
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        message: customerInput
+                    })
+                });
+                
+                const data = await response.json();
+                
+                addChatMessage('customer', customerInput);
+                addChatMessage('agent', data.reply);
+                
+                if (data.should_end_call) {
+                    endCall();
+                }
+                
+                updateStatus(`Voice response processed (${selectedMode === 'rag' ? 'RAG' : 'Custom'} mode)`);
+                
+            } catch (error) {
+                updateStatus('Error processing voice: ' + error.message, 'error');
+            }
+        }
+        
+        async function sendChatMessage() {
+            if (!currentCallId) return;
+            
+            const chatInput = document.getElementById('chatInput');
+            const message = chatInput.value.trim();
+            if (!message) return;
+            
+            const selectedMode = document.querySelector('input[name="responseMode"]:checked').value;
+            
+            chatInput.value = '';
+            chatInput.disabled = true;
+            document.getElementById('sendBtn').disabled = true;
+            
+            try {
+                addChatMessage('customer', message);
+                
+                const endpoint = selectedMode === 'rag' 
+                    ? `/rag-respond/${currentCallId}` 
+                    : `/respond/${currentCallId}`;
+                
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        message: message
+                    })
+                });
+                
+                const data = await response.json();
+                
+                addChatMessage('agent', data.reply);
+                
+                if (data.should_end_call) {
+                    endCall();
+                } else {
+                    chatInput.disabled = false;
+                    document.getElementById('sendBtn').disabled = false;
+                    chatInput.focus();
+                }
+                
+                updateStatus(`Response processed (${selectedMode === 'rag' ? 'RAG' : 'Custom'} mode)`);
+                
+            } catch (error) {
+                updateStatus('Error sending response: ' + error.message, 'error');
+                chatInput.disabled = false;
+                document.getElementById('sendBtn').disabled = false;
+            }
+        }
+        
+        function endCall() {
+            updateStatus('Call ended - Ready to start a new call');
+            
+            document.getElementById('simulateBtn').disabled = true;
+            document.getElementById('endBtn').disabled = true;
+            document.getElementById('chatInput').disabled = true;
+            document.getElementById('sendBtn').disabled = true;
+            document.getElementById('modeSelector').style.display = 'none';
+            document.getElementById('chatbox').style.display = 'none';
+            
+            currentCallId = null;
+        }
+        
+        function addChatMessage(sender, text) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}`;
+            messageDiv.innerHTML = `<strong>${sender === 'agent' ? '🤖 Agent' : '👤 You'}:</strong> ${text}`;
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
+        function clearChatHistory() {
+            const chatMessages = document.getElementById('chatMessages');
+            
+            if (confirm('Are you sure you want to clear the chat history?')) {
+                chatMessages.innerHTML = '';
+                updateStatus('Chat history cleared');
+            }
+        }
+        
+        async function checkRagStatus() {
+            try {
+                const response = await fetch('/rag-status');
+                const status = await response.json();
+                
+                const ragOption = document.getElementById('ragMode');
+                const ragLabel = document.querySelector('label[for="ragMode"]');
+                
+                if (!status.available) {
+                    ragOption.disabled = true;
+                    ragLabel.style.color = '#999';
+                    ragLabel.title = status.message;
+                    document.getElementById('customMode').checked = true;
+                } else {
+                    ragOption.disabled = false;
+                    ragLabel.style.color = '';
+                    ragLabel.title = 'RAG system ready';
+                }
+                
+                updateStatus(`RAG Status: ${status.message}`, status.available ? 'info' : 'error');
+            } catch (error) {
+                console.error('Failed to check RAG status:', error);
+                const ragOption = document.getElementById('ragMode');
+                if (ragOption) {
+                    ragOption.disabled = true;
+                    document.getElementById('customMode').checked = true;
+                }
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            const chatInput = document.getElementById('chatInput');
+            if (chatInput) {
+                chatInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter' && !chatInput.disabled) {
+                        sendChatMessage();
+                    }
+                });
+            }
+            
+            checkRagStatus();
+        });
+    </script>
+</body>
+</html>
