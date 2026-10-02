@@ -45,3 +45,7 @@ Thumbs.db
 *.swp
 *.swo
 *~
+
+# Internal / Private Docs
+unofficial.md
+logschange.md

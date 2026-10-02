@@ -26,7 +26,7 @@ import requests
 
 BASE = "http://localhost:8000"
 ENDPOINT = "/respond-rag"                      # or "/respond" to test custom mode
-BODY_KEY = "customer_response"                 # adjust to match models.py
+BODY_KEY = "message"                         # matches models.py CallResponse
 REPLY_KEYS = ("response", "reply", "agent_response", "message", "ai_response")
 
 # Voice-first limits: phone replies must be short

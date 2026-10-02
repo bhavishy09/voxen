@@ -1,0 +1,75 @@
+# TVS Knowledge Base | Last verified: 3 Oct 2026 | Prices: Delhi ex-showroom unless stated
+Rule: quote price bands, not exact prices. Exact price, colors and on-road cost: the team confirms.
+
+## Jupiter 125
+Ask-words: Jupiter, scooter, family, price, mileage, storage, helmet, colors
+Type: scooter, 125cc
+Price: starts under Rs 90,000 ex-showroom, varies by variant and city
+Variants: Drum Alloy, Disc, DT SXC, SmartXonnect
+Mileage: about 50 km per litre (ARAI claimed)
+Highlights: 33-litre under-seat storage that TVS says fits two helmets, front fuel-filling without getting off, metal body, USB charging
+Best for: family and daily city use
+
+## Raider 125
+Ask-words: Raider, motorcycle, bike, sporty, mileage, price, ride mode, youth
+Type: motorcycle, 125cc, 7 variants
+Price: starts under Rs 90,000 ex-showroom, top variants go to about Rs 1 lakh
+Mileage: about 56.7 km per litre (ARAI claimed)
+Highlights: ride modes (Eco and Power, Boost on higher variants), 5-inch TFT display and SmartXonnect on top variants, dual disc brakes with single-channel ABS on the SXC DD and TFT DD variants
+Top speed: about 99 km/h
+Best for: daily commute with a sporty look
+
+## Apache RTR 160 4V
+Ask-words: Apache, performance, racing, power, price, ABS, traction control, Bluetooth
+Type: motorcycle, 160cc, 17.55 PS
+Variants (2026, ex-showroom Delhi):
+- Single-channel ABS: Rs 1,25,440
+- Dual-channel ABS with USD forks: Rs 1,30,690
+- Top variant with USD forks, TFT display, traction control: Rs 1,37,440
+Ride modes: Sport, Urban, Rain
+Best for: riders who want performance
+
+## iQube Electric
+Ask-words: iQube, electric, EV, range, charging, running cost, battery, subsidy, petrol bachat
+Type: electric scooter, variants from 2.3 kWh up to 5.3 kWh
+Price: depends on variant and city. Central PM E-Drive subsidy is up to Rs 5,000, and some states add their own.
+Do not quote an exact price. Say: "Price depends on variant and city, our team will confirm the exact amount."
+Range: varies by variant, about 100 km or more per charge on the base model (claimed)
+Running cost: roughly 30 paise per km at home charging rates (estimate)
+Highlights: silent ride, reverse assist, smart display, geo-fencing, live battery status
+Best for: city commuting with low running cost
+
+## Quick Compare
+Ask-words: compare, which is better, best mileage, cheapest, sabse sasta, sabse zyada mileage
+Lower price: Jupiter 125 and Raider 125 both start under Rs 90,000. Apache starts around Rs 1.25 lakh.
+Best mileage among petrol options here: Raider 125 (about 56.7 km/l claimed)
+Most performance: Apache RTR 160 4V
+Lowest running cost: iQube
+Scooters: Jupiter 125 (33-litre storage), iQube. Motorcycles: Raider 125, Apache RTR 160 4V.
+
+## Finance and Offers
+Ask-words: EMI, down payment, loan, finance, offer, kitni EMI
+Finance is available through TVS Credit and partner banks.
+Down payment and EMI depend on model, city, lender and tenure.
+Offers change by city and season. Do not quote a down payment or EMI figure.
+Say: "Our team will share the best finance option for you."
+
+## Warranty
+Ask-words: warranty, guarantee, battery warranty, kitne saal
+Scooters (Jupiter): 5 years or 50,000 km, whichever is earlier
+Motorcycles (Raider, Apache): 5 years or 60,000 km, whichever is earlier
+iQube: 3 years or 50,000 km (2.3 kWh variant: 3 years or 30,000 km)
+Conditions apply. Extended cover offers vary, the team confirms.
+
+## Test Ride and Booking
+Ask-words: test ride, book, visit, showroom, home, timing, license, kab
+Test ride: free, at home or at the nearest showroom
+Timing: 7 days a week, 10 AM to 7 PM
+Needed: valid driving licence or learner's licence
+Details to collect: city or area, day (today, tomorrow, weekend), slot (morning, evening)
+After booking: SMS and WhatsApp confirmation with the dealership executive's details
+
+## Not Available Here
+Ask-words: stock, availability, delivery date, discount, exchange, colors, on-road price, insurance, waiting period
+The agent does not have: stock, delivery dates, discounts, exchange value, colors, on-road price, insurance cost.
+Say: "Our team will confirm that for you."
