@@ -31,9 +31,8 @@ voice_service = VoiceService()
 async def start_call(call_data: CallStart):
     """Start a new call session"""
     call_id = str(uuid.uuid4())
-    
-    first_message = f"Hi {call_data.customer_name}, this is your AI assistant calling about our AI Mastery Bootcamp. Can I share a quick detail with you?"
-      # Create new call
+    first_message = f"Hi {call_data.customer_name}, this is Voxen from TVS Motors calling regarding your inquiry for a test ride. Can I share a quick detail with you?"
+    # Create new call
     call = Call(
         call_id=call_id,
         customer_name=call_data.customer_name,
