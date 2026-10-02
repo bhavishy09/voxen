@@ -697,7 +697,7 @@
                 recognition = new SpeechRecognition();
                 recognition.continuous = false;
                 recognition.interimResults = false;
-                recognition.lang = 'hi-IN'; // Works for Hinglish, Hindi and Indian English
+                recognition.lang = 'en-IN'; // Indian English / Hinglish in Roman script (not Devanagari)
 
                 recognition.onstart = function() {
                     isListening = true;
