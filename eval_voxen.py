@@ -191,7 +191,8 @@ def extract_action(data):
 
 
 def count_sentences(text):
-    return len([s for s in re.split(r"[.!?\u0964]+", text) if s.strip()])
+    cleaned = re.sub(r"\d+\.\d+", "NUM", text)
+    return len([s for s in re.split(r"[.!?\u0964]+", cleaned) if s.strip()])
 
 
 def percentile(values, p):

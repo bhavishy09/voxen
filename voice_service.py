@@ -21,6 +21,8 @@ class VoiceService:
     
     def text_to_speech(self, text: str) -> bool:
         """Convert text to speech and play it"""
+        if os.getenv("DISABLE_TTS", "false").lower() in ("true", "1", "yes"):
+            return True
         try:
             print(f" Speaking: {text[:50]}...")
             

@@ -291,14 +291,14 @@ class LLMService:
         """Fallback responses for common TVS two-wheeler scenarios"""
         message_lower = customer_message.lower()
         
-        if any(word in message_lower for word in ["expensive", "cost", "price", "kitna", "rate", "fees"]):
+        if any(word in message_lower for word in ["mileage", "average", "kitna deti"]):
+            return "Raider ka mileage lagbhag 56.7 km per litre aur Jupiter ka 50 hai. Aap kaunsa pasand karenge?"
+        
+        if any(word in message_lower for word in ["expensive", "cost", "price", "rate", "fees", "kitne ki", "kitna price", "kitna kharcha", "on-road"]):
             return "Jupiter aur Raider Rs 90,000 ke andar start hote hain. Kya aap inka test ride lena chahenge?"
         
         if any(word in message_lower for word in ["time", "busy", "baad", "later", "kal"]):
             return "Koi baat nahi, samajh gaya. Kya kal shaam ko call karna theek rahega?"
-        
-        if any(word in message_lower for word in ["mileage", "average", "kitna deti hai"]):
-            return "Raider ka mileage lagbhag 56.7 km per litre aur Jupiter ka 50 hai. Aap kaunsa pasand karenge?"
             
         if any(word in message_lower for word in ["not interested", "nahi chahiye", "no thanks"]):
             return "Koi baat nahi, samajh gaya. Agar future mein test ride lena ho toh batayein, have a great day."

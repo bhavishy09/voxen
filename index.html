@@ -523,7 +523,7 @@
         
         <div class="controls">
             <button onclick="startCall()">📞 Start Call</button>
-            <button onclick="simulateResponse()" id="simulateBtn" disabled>🎙️ Simulate Voice Response</button>
+            <button onclick="startListening()" id="simulateBtn" disabled>🎙️ Speak to Agent</button>
             <button onclick="endCall()" id="endBtn" disabled>📴 End Call</button>
         </div>
         
@@ -531,12 +531,12 @@
             <h4>🤖 AI Response Mode</h4>
             <div class="mode-options">
                 <div class="mode-option">
-                    <input type="radio" id="customMode" name="responseMode" value="custom" checked>
-                    <label for="customMode">📝 Custom Sales Responses (Rule-based)</label>
+                    <input type="radio" id="ragMode" name="responseMode" value="rag" checked>
+                    <label for="ragMode">🧠 RAG System (AI Knowledge Base)</label>
                 </div>
                 <div class="mode-option">
-                    <input type="radio" id="ragMode" name="responseMode" value="rag">
-                    <label for="ragMode">🧠 RAG System (AI Knowledge Base)</label>
+                    <input type="radio" id="customMode" name="responseMode" value="custom">
+                    <label for="customMode">📝 Custom Sales Responses (Rule-based)</label>
                 </div>
             </div>
         </div>
@@ -614,16 +614,24 @@
             }
         }
         
-        async function simulateResponse() {
-            if (!currentCallId) return;
+        let recognition = null;
+        let isListening = false;
+
+        async function processUserMessage(message) {
+            if (!currentCallId || !message || !message.trim()) return;
             
-            const customerInput = prompt('Simulate customer speech input:');
-            if (!customerInput) {
-                updateStatus('No input provided');
-                return;
-            }
+            const cleanMessage = message.trim();
+            const chatInput = document.getElementById('chatInput');
+            const sendBtn = document.getElementById('sendBtn');
+            const micBtn = document.getElementById('simulateBtn');
             
-            updateStatus('Processing simulated voice input...');
+            chatInput.value = '';
+            chatInput.disabled = true;
+            sendBtn.disabled = true;
+            micBtn.disabled = true;
+            
+            addChatMessage('customer', cleanMessage);
+            updateStatus('Agent is thinking & responding...');
             
             try {
                 const selectedMode = document.querySelector('input[name="responseMode"]:checked').value;
@@ -637,53 +645,7 @@
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        message: customerInput
-                    })
-                });
-                
-                const data = await response.json();
-                
-                addChatMessage('customer', customerInput);
-                addChatMessage('agent', data.reply);
-                
-                if (data.should_end_call) {
-                    endCall();
-                }
-                
-                updateStatus(`Voice response processed (${selectedMode === 'rag' ? 'RAG' : 'Custom'} mode)`);
-                
-            } catch (error) {
-                updateStatus('Error processing voice: ' + error.message, 'error');
-            }
-        }
-        
-        async function sendChatMessage() {
-            if (!currentCallId) return;
-            
-            const chatInput = document.getElementById('chatInput');
-            const message = chatInput.value.trim();
-            if (!message) return;
-            
-            const selectedMode = document.querySelector('input[name="responseMode"]:checked').value;
-            
-            chatInput.value = '';
-            chatInput.disabled = true;
-            document.getElementById('sendBtn').disabled = true;
-            
-            try {
-                addChatMessage('customer', message);
-                
-                const endpoint = selectedMode === 'rag' 
-                    ? `/rag-respond/${currentCallId}` 
-                    : `/respond/${currentCallId}`;
-                
-                const response = await fetch(endpoint, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        message: message
+                        message: cleanMessage
                     })
                 });
                 
@@ -695,23 +657,142 @@
                     endCall();
                 } else {
                     chatInput.disabled = false;
-                    document.getElementById('sendBtn').disabled = false;
+                    sendBtn.disabled = false;
+                    micBtn.disabled = false;
                     chatInput.focus();
                 }
                 
                 updateStatus(`Response processed (${selectedMode === 'rag' ? 'RAG' : 'Custom'} mode)`);
                 
             } catch (error) {
-                updateStatus('Error sending response: ' + error.message, 'error');
+                updateStatus('Error processing response: ' + error.message, 'error');
                 chatInput.disabled = false;
-                document.getElementById('sendBtn').disabled = false;
+                sendBtn.disabled = false;
+                micBtn.disabled = false;
             }
+        }
+
+        async function startListening() {
+            if (!currentCallId) return;
+
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                // Graceful fallback to prompt modal if browser does not support Web Speech API
+                return simulateResponse();
+            }
+
+            const micBtn = document.getElementById('simulateBtn');
+
+            if (isListening && recognition) {
+                try {
+                    recognition.stop();
+                } catch (e) {}
+                isListening = false;
+                micBtn.textContent = '🎙️ Speak to Agent';
+                micBtn.style.backgroundColor = '';
+                return;
+            }
+
+            try {
+                recognition = new SpeechRecognition();
+                recognition.continuous = false;
+                recognition.interimResults = false;
+                recognition.lang = 'hi-IN'; // Works for Hinglish, Hindi and Indian English
+
+                recognition.onstart = function() {
+                    isListening = true;
+                    micBtn.textContent = '🔴 Listening... (Speak now)';
+                    micBtn.style.backgroundColor = '#dc2626';
+                    micBtn.style.borderColor = '#b91c1c';
+                    updateStatus('🎙️ Listening... Please speak your question into your microphone.');
+                };
+
+                recognition.onresult = async function(event) {
+                    isListening = false;
+                    micBtn.textContent = '🎙️ Speak to Agent';
+                    micBtn.style.backgroundColor = '';
+                    micBtn.style.borderColor = '';
+
+                    const transcript = event.results && event.results[0] && event.results[0][0] ? event.results[0][0].transcript : '';
+                    if (!transcript || !transcript.trim()) {
+                        updateStatus('No speech recognized. Please click speak again.', 'error');
+                        return;
+                    }
+
+                    updateStatus(`Heard: "${transcript}". Sending to agent...`);
+                    const chatInput = document.getElementById('chatInput');
+                    chatInput.value = transcript;
+                    await processUserMessage(transcript);
+                };
+
+                recognition.onerror = function(event) {
+                    isListening = false;
+                    micBtn.textContent = '🎙️ Speak to Agent';
+                    micBtn.style.backgroundColor = '';
+                    micBtn.style.borderColor = '';
+                    console.error('Speech recognition error:', event.error);
+                    
+                    if (event.error === 'not-allowed') {
+                        updateStatus('Microphone access denied. Please enable mic permissions or type your question below.', 'error');
+                    } else if (event.error === 'no-speech') {
+                        updateStatus('No speech detected. Please click Speak and try again.', 'error');
+                    } else {
+                        updateStatus(`Speech recognition issue (${event.error}). Prompt fallback opened.`, 'error');
+                        simulateResponse();
+                    }
+                };
+
+                recognition.onend = function() {
+                    isListening = false;
+                    micBtn.textContent = '🎙️ Speak to Agent';
+                    micBtn.style.backgroundColor = '';
+                    micBtn.style.borderColor = '';
+                };
+
+                recognition.start();
+            } catch (err) {
+                console.error('Speech recognition start failed:', err);
+                simulateResponse();
+            }
+        }
+        
+        async function simulateResponse() {
+            if (!currentCallId) return;
+            
+            const customerInput = prompt('Simulate customer speech input:');
+            if (!customerInput || !customerInput.trim()) {
+                updateStatus('No input provided');
+                return;
+            }
+            
+            await processUserMessage(customerInput);
+        }
+        
+        async function sendChatMessage() {
+            if (!currentCallId) return;
+            
+            const chatInput = document.getElementById('chatInput');
+            const message = chatInput.value.trim();
+            if (!message) return;
+            
+            await processUserMessage(message);
         }
         
         function endCall() {
             updateStatus('Call ended - Ready to start a new call');
+
+            if (isListening && recognition) {
+                try {
+                    recognition.stop();
+                } catch(e) {}
+                isListening = false;
+            }
             
-            document.getElementById('simulateBtn').disabled = true;
+            const micBtn = document.getElementById('simulateBtn');
+            micBtn.textContent = '🎙️ Speak to Agent';
+            micBtn.style.backgroundColor = '';
+            micBtn.style.borderColor = '';
+            micBtn.disabled = true;
             document.getElementById('endBtn').disabled = true;
             document.getElementById('chatInput').disabled = true;
             document.getElementById('sendBtn').disabled = true;
@@ -754,6 +835,7 @@
                     document.getElementById('customMode').checked = true;
                 } else {
                     ragOption.disabled = false;
+                    ragOption.checked = true;
                     ragLabel.style.color = '';
                     ragLabel.title = 'RAG system ready';
                 }

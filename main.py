@@ -136,8 +136,11 @@ async def respond_to_call_rag(call_id: str, response: CallResponse):
     
     return {
         "reply": ai_reply,
-        "should_end_call": should_end
+        "should_end_call": should_end,
+        "action": getattr(llm_service, "last_turn_action", "none"),
+        "stage": getattr(llm_service, "last_turn_stage", "discovery")
     }
+
 
 @app.get("/conversation/{call_id}")
 async def get_conversation(call_id: str):

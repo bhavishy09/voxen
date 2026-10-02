@@ -49,3 +49,4 @@ Thumbs.db
 # Internal / Private Docs
 unofficial.md
 logschange.md
+*.csv
