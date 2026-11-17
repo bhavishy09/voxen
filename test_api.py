@@ -31,11 +31,11 @@ def test_api():
     # Test 2: Send response
     print("\n2. Testing customer response...")
     response_data = {
-        "message": "Tell me more about the course"
+        "message": "Jupiter 125 ke features aur mileage batao"
     }
     
     try:
-        response = requests.post(f"{base_url}/respond/{call_id}", json=response_data)
+        response = requests.post(f"{base_url}/respond-rag/{call_id}", json=response_data)
         if response.status_code == 200:
             reply_data = response.json()
             print(f" Agent replied: {reply_data['reply']}")

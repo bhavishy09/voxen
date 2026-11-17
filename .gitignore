@@ -30,6 +30,11 @@ __pycache__/
 *.sqlite3
 *.db
 
+# Benchmark CSVs (track v1 and v2, ignore temporary runs)
+*.csv
+!results_v1.csv
+!results_v2.csv
+
 # Operating System files
 .DS_Store
 .DS_Store?
@@ -49,4 +54,3 @@ Thumbs.db
 # Internal / Private Docs
 unofficial.md
 logschange.md
-*.csv

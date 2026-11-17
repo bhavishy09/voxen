@@ -29,10 +29,9 @@ voice_service = VoiceService()
 
 @app.post("/start-call")
 async def start_call(call_data: CallStart):
-    """Start a new call session"""
     call_id = str(uuid.uuid4())
     first_message = f"Hi {call_data.customer_name}, this is Voxen from TVS Motors calling regarding your inquiry for a test ride. Can I share a quick detail with you?"
-    # Create new call
+
     call = Call(
         call_id=call_id,
         customer_name=call_data.customer_name,
@@ -46,10 +45,9 @@ async def start_call(call_data: CallStart):
     )
     
     calls_db[call_id] = call
-      # Play the first message
+    # Play the first message
     if not voice_service.text_to_speech(first_message):
         voice_service.fallback_tts(first_message)
-    
     return {
         "call_id": call_id,
         "message": f"Calling {call_data.customer_name}...",
@@ -116,8 +114,17 @@ async def respond_to_call_rag(call_id: str, response: CallResponse):
         timestamp=datetime.now()
     )
     call.history.append(customer_history)
-      # Generate AI response using RAG system
-    ai_reply = llm_service.get_rag_response(response.message)
+    # Format prior conversation history for LangChain
+    formatted_history = [
+        ("human" if h.sender == "customer" else "ai", h.text)
+        for h in call.history[:-1]
+    ]
+
+    # Generate AI response using RAG system
+    ai_reply = llm_service.generate_rag_response(
+        customer_message=response.message,
+        history=formatted_history
+    )
     should_end = llm_service.should_end_call(response.message)
     
     # Add AI response to history
@@ -140,7 +147,6 @@ async def respond_to_call_rag(call_id: str, response: CallResponse):
         "action": getattr(llm_service, "last_turn_action", "none"),
         "stage": getattr(llm_service, "last_turn_stage", "discovery")
     }
-
 
 @app.get("/conversation/{call_id}")
 async def get_conversation(call_id: str):
@@ -236,10 +242,19 @@ async def rag_respond_to_call(call_id: str, response: CallResponse):
     )
     call.history.append(customer_history)
     
+    # Format prior conversation history for LangChain
+    formatted_history = [
+        ("human" if h.sender == "customer" else "ai", h.text)
+        for h in call.history[:-1]
+    ]
+
     # Generate RAG response
-    ai_reply = llm_service.generate_rag_response(response.message)
+    ai_reply = llm_service.generate_rag_response(
+        customer_message=response.message,
+        history=formatted_history
+    )
     should_end = llm_service.should_end_call(response.message)
-      # Add AI response to history
+    # Add AI response to history
     agent_history = CallHistory(
         sender="agent",
         text=ai_reply,
@@ -256,9 +271,11 @@ async def rag_respond_to_call(call_id: str, response: CallResponse):
     
     return {
         "reply": ai_reply,
-        "should_end_call": should_end
+        "should_end_call": should_end,
+        "action": getattr(llm_service, "last_turn_action", "none"),
+        "stage": getattr(llm_service, "last_turn_stage", "discovery")
     }
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8001)
+    uvicorn.run(app, host="0.0.0.0", port=8000)

@@ -289,6 +289,7 @@ def run(label, only=None):
                    "chk_non_empty": False, "passed": False}
         rows.append(row)
         print(f"{i:>2}/{len(cases)} {'PASS' if row['passed'] else 'FAIL'}  {row['message']}")
+        time.sleep(0.5)
 
     fields = sorted({k for r in rows for k in r}, key=lambda k: (k.startswith("chk_"), k))
     path = f"results_{label}.csv"

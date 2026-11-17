@@ -6,6 +6,7 @@ import json
 
 def test_simulate_endpoint():
     print("Testing simulate voice endpoint...")
+    base_url = "http://localhost:8000"
     
     # First, start a call
     start_data = {
@@ -14,7 +15,7 @@ def test_simulate_endpoint():
     }
     
     print("1. Starting a call...")
-    start_response = requests.post("http://localhost:8001/start-call", json=start_data)
+    start_response = requests.post(f"{base_url}/start-call", json=start_data)
     
     if start_response.status_code == 200:
         call_data = start_response.json()
@@ -25,7 +26,7 @@ def test_simulate_endpoint():
         print("\n2. Testing simulate voice endpoint...")
         print("   This will try to capture your voice...")
         
-        simulate_response = requests.get(f"http://localhost:8001/simulate-call/{call_id}")
+        simulate_response = requests.get(f"{base_url}/simulate-call/{call_id}")
         
         if simulate_response.status_code == 200:
             result = simulate_response.json()
