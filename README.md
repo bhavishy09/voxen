@@ -33,6 +33,33 @@ Traditional sales chatbots often feel rigid or introduce awkward delays. Voxen s
 
 ---
 
+## 📊 Benchmark Evaluation Suite (`v1` vs `v2`)
+
+Voxen features an automated 61-scenario evaluation harness ([`eval_voxen.py`](eval_voxen.py)) that stress-tests voice brevity, anti-hallucination grounding, objection handling, language mirroring, and multi-turn state retention.
+
+In **Commit [`476a5db3`](https://github.com/bhavishy09/voxen/commit/476a5db3)**, targeted prompt engineering and conversation memory wiring increased the benchmark pass rate from **80% to 90%**:
+
+| Metric | Baseline (`results_v1.csv`) | Optimized (`results_v2.csv`) | Impact |
+|---|:---:|:---:|:---:|
+| **Overall Pass Rate** | **80%** (49/61) | **90%** (55/61) | **+10% Net Improvement** |
+| **Spoken Word Economy** | 16.6 words | 17.8 words | Strictly under 22-word limit |
+| **Voice Cleanliness** | 100% | 100% | Zero emojis, asterisks, or markdown |
+
+### Category Highlights
+* 🟢 **Test-Ride Booking**: **100% (7/7)** — Slot capture, showroom timings (10 AM–7 PM), doorstep rides.
+* 🟢 **Objection Resolution**: **100% (8/8)** — Price hesitation, timing delays, competitor comparisons.
+* 🟢 **Grounded Deferrals**: **100% (5/5)** — Zero invented figures for on-road prices, discounts, or stock.
+* 🟢 **Model Comparisons**: **100% (4/4)** — Accurate cross-model analysis (Jupiter, Raider, Apache, iQube).
+* 🟢 **Warranty Coverage**: **100% (3/3)** — Verified TVS engine and EV battery terms.
+* 🟢 **Callback Handling**: **100% (2/2)** — Structured `schedule_callback` action triggers.
+
+```bash
+# Compare benchmark runs directly
+python eval_voxen.py --compare results_v1.csv results_v2.csv
+```
+
+---
+
 ## 🏗️ Architecture Pipeline
 
 ```
@@ -205,9 +232,13 @@ Returns diagnostic health and indexing status for the RAG vector store.
 ```
 voxen/
 ├── main.py                 # FastAPI application routing & session management
-├── llm_service.py          # RAG vector index, Groq integration & objection engine
+├── llm_service.py          # RAG vector index, Groq integration & structured output
 ├── voice_service.py        # Speech recognition & audio synthesis service
 ├── models.py               # Pydantic schemas for calls & messaging
+├── tvs_bike_info.txt       # Grounded knowledge base for TVS two-wheelers
+├── eval_voxen.py           # 61-scenario automated evaluation harness
+├── results_v1.csv          # Baseline evaluation benchmark (80% pass rate)
+├── results_v2.csv          # Optimized evaluation benchmark (90% pass rate)
 ├── index.html              # Modern dark-mode web console (HTML5/CSS3/JS)
 ├── requirements.txt        # Python package specifications
 ├── start.bat               # Windows quick-launch automation script
