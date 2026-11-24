@@ -7,21 +7,30 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+# Core LangChain & Groq (lightweight, zero heavy C/C++ or PyTorch dependencies)
+LANGCHAIN_AVAILABLE = False
 LANGCHAIN_IMPORT_ERROR = None
+
+try:
+    from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+    from langchain_groq import ChatGroq
+    from langchain.schema import Document
+    LANGCHAIN_AVAILABLE = True
+    print(" LangChain Core & Groq imported successfully")
+except Exception as e:
+    LANGCHAIN_IMPORT_ERROR = str(e)
+    print(f" LangChain not available: {e}")
+
+# Optional Vector Store components (HuggingFace + FAISS)
+VECTOR_STORE_AVAILABLE = False
 try:
     from langchain_text_splitters import RecursiveCharacterTextSplitter
     from langchain_community.embeddings import HuggingFaceEmbeddings
     from langchain_community.vectorstores import FAISS
-    from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-    from langchain_groq import ChatGroq
-    from langchain.schema import Document
-    
-    LANGCHAIN_AVAILABLE = True
-    print(" LangChain components imported successfully")
+    VECTOR_STORE_AVAILABLE = True
+    print(" Vector store components (FAISS, HuggingFaceEmbeddings) available")
 except Exception as e:
-    LANGCHAIN_AVAILABLE = False
-    LANGCHAIN_IMPORT_ERROR = str(e)
-    print(f" LangChain not available: {e}")
+    print(f" Note: FAISS/HuggingFaceEmbeddings not available ({e}). Using direct full-context injection (cloud-optimized mode).")
 
 
 # =====================================================================
@@ -149,34 +158,36 @@ class LLMService:
             knowledge_file = "tvs_bike_info.txt"
             if os.path.exists(knowledge_file):
                 with open(knowledge_file, "r", encoding="utf-8") as f:
-                    content = f.read()
+                    self.knowledge_content = f.read()
             else:
-                content = self._get_default_course_content()
+                self.knowledge_content = self._get_default_course_content()
             
-            print(f" Loaded knowledge base: {len(content)} characters")
+            print(f" Loaded knowledge base: {len(self.knowledge_content)} characters")
             
-            # Split text into chunks
-            splitter = RecursiveCharacterTextSplitter(
-                chunk_size=1000, 
-                chunk_overlap=100,
-                separators=["\n\n", "\n", " ", ""]
-            )
-            documents = [Document(page_content=content)]
-            split_docs = splitter.split_documents(documents)
-            
-            print(f" Split into {len(split_docs)} chunks")
-            
-            # Embeddings and vector store
-            print(" Loading embeddings model...")
-            embeddings = HuggingFaceEmbeddings(
-                model_name="all-MiniLM-L6-v2",
-                model_kwargs={"device": "cpu"},
-                encode_kwargs={"normalize_embeddings": True}
-            )
-            
-            print(" Creating vector store...")
-            self.vector_store = FAISS.from_documents(split_docs, embeddings)
-            self.retriever = self.vector_store.as_retriever(search_kwargs={"k": 2})
+            # Optional vector store retriever if FAISS / HuggingFace are available
+            self.retriever = None
+            if VECTOR_STORE_AVAILABLE:
+                try:
+                    splitter = RecursiveCharacterTextSplitter(
+                        chunk_size=1000, 
+                        chunk_overlap=100,
+                        separators=["\n\n", "\n", " ", ""]
+                    )
+                    documents = [Document(page_content=self.knowledge_content)]
+                    split_docs = splitter.split_documents(documents)
+                    embeddings = HuggingFaceEmbeddings(
+                        model_name="all-MiniLM-L6-v2",
+                        model_kwargs={"device": "cpu"},
+                        encode_kwargs={"normalize_embeddings": True}
+                    )
+                    self.vector_store = FAISS.from_documents(split_docs, embeddings)
+                    self.retriever = self.vector_store.as_retriever(search_kwargs={"k": 2})
+                    print(" Vector store (FAISS) initialized successfully")
+                except Exception as ve:
+                    print(f" Vector store initialization skipped ({ve}); using direct context injection")
+                    self.retriever = None
+            else:
+                print(" Direct knowledge injection active (cloud-optimized mode)")
             
             # Prompt template
             self.prompt = ChatPromptTemplate.from_messages([
@@ -204,7 +215,7 @@ class LLMService:
                 self.llm = None
                 self.chain = None
                 self.retrieval_chain = None
-                raise Exception("GROQ API key not found")
+                raise Exception("GROQ_API_KEY environment variable is missing. Please set GROQ_API_KEY in your Render environment variables.")
                 
         except Exception as e:
             print(f" Error in RAG setup: {e}")
@@ -227,15 +238,18 @@ class LLMService:
             return "RAG system is not available. Please switch to Custom mode for responses."
         
         try:
-            # 1. Retrieve top context chunks
-            search_query = customer_message
-            if len(customer_message.split()) <= 4 and history:
-                for role, text in reversed(history):
-                    if role == "human":
-                        search_query = f"{text} {customer_message}"
-                        break
-            docs = self.retriever.invoke(search_query)
-            context_text = "\n\n".join(doc.page_content for doc in docs)
+            # 1. Retrieve top context chunks or inject full knowledge base
+            if getattr(self, "retriever", None) is not None:
+                search_query = customer_message
+                if len(customer_message.split()) <= 4 and history:
+                    for role, text in reversed(history):
+                        if role == "human":
+                            search_query = f"{text} {customer_message}"
+                            break
+                docs = self.retriever.invoke(search_query)
+                context_text = "\n\n".join(doc.page_content for doc in docs)
+            else:
+                context_text = getattr(self, "knowledge_content", self._get_default_course_content())
             
             # 2. Invoke structured chain with safe defaults
             inputs = {

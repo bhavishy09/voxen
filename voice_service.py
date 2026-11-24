@@ -1,16 +1,21 @@
 import os
 import tempfile
 from gtts import gTTS
-import pygame
+try:
+    import pygame
+    PYGAME_AVAILABLE = True
+except Exception:
+    PYGAME_AVAILABLE = False
 import speech_recognition as sr
 
 class VoiceService:
     def __init__(self):
-        # Initialize pygame mixer for audio playback
-        try:
-            pygame.mixer.init()
-        except Exception as e:
-            print(f" Pygame mixer not available (headless cloud environment): {e}")
+        # Initialize pygame mixer for audio playback if available
+        if PYGAME_AVAILABLE:
+            try:
+                pygame.mixer.init()
+            except Exception as e:
+                print(f" Pygame mixer not available (headless cloud environment): {e}")
         
         # Initialize speech recognition
         self.recognizer = sr.Recognizer()
@@ -24,7 +29,7 @@ class VoiceService:
     
     def text_to_speech(self, text: str) -> bool:
         """Convert text to speech and play it"""
-        if os.getenv("DISABLE_TTS", "false").lower() in ("true", "1", "yes"):
+        if not PYGAME_AVAILABLE or os.getenv("DISABLE_TTS", "false").lower() in ("true", "1", "yes"):
             return True
         try:
             print(f" Speaking: {text[:50]}...")
