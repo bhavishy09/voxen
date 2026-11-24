@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/(start-call|rag-respond/:path*|respond-rag/:path*|respond/:path*|rag-status|conversation/:path*|simulate-call/:path*)",
+      "destination": "https://voxen-backend-fzqr.onrender.com/$1"
+    }
+  ]
+}
