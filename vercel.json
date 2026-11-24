@@ -1,9 +1,32 @@
 {
   "rewrites": [
     {
-      "source": "/(start-call|rag-respond/:path*|respond-rag/:path*|respond/:path*|rag-status|conversation/:path*|simulate-call/:path*)",
-      "destination": "https://voxen-backend-fzqr.onrender.com/$1"
+      "source": "/start-call",
+      "destination": "https://voxen-backend-fzqr.onrender.com/start-call"
+    },
+    {
+      "source": "/rag-status",
+      "destination": "https://voxen-backend-fzqr.onrender.com/rag-status"
+    },
+    {
+      "source": "/rag-respond/:call_id*",
+      "destination": "https://voxen-backend-fzqr.onrender.com/rag-respond/:call_id*"
+    },
+    {
+      "source": "/respond-rag/:call_id*",
+      "destination": "https://voxen-backend-fzqr.onrender.com/respond-rag/:call_id*"
+    },
+    {
+      "source": "/respond/:call_id*",
+      "destination": "https://voxen-backend-fzqr.onrender.com/respond/:call_id*"
+    },
+    {
+      "source": "/conversation/:call_id*",
+      "destination": "https://voxen-backend-fzqr.onrender.com/conversation/:call_id*"
+    },
+    {
+      "source": "/simulate-call/:call_id*",
+      "destination": "https://voxen-backend-fzqr.onrender.com/simulate-call/:call_id*"
     }
   ]
 }
-

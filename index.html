@@ -568,6 +568,27 @@
     <script>
         let currentCallId = null;
         
+        function speakAgentText(text) {
+            if (!('speechSynthesis' in window) || !text) return;
+            try {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.rate = 1.0;
+                utterance.pitch = 1.0;
+                utterance.lang = 'en-IN';
+                
+                const voices = window.speechSynthesis.getVoices();
+                const preferredVoice = voices.find(v => v.lang === 'en-IN' || v.lang === 'hi-IN') ||
+                                       voices.find(v => v.name.includes('India') || v.name.includes('Natural') || v.name.includes('Google'));
+                if (preferredVoice) {
+                    utterance.voice = preferredVoice;
+                }
+                window.speechSynthesis.speak(utterance);
+            } catch (e) {
+                console.warn('Speech synthesis playback error:', e);
+            }
+        }
+        
         function updateStatus(message, type = 'info') {
             const status = document.getElementById('status');
             status.textContent = message;
@@ -595,6 +616,11 @@
                         phone_number: phoneNumber
                     })
                 });
+                
+                if (!response.ok) {
+                    const errText = await response.text();
+                    throw new Error(`HTTP ${response.status}: ${errText.substring(0, 100)}`);
+                }
                 
                 const data = await response.json();
                 currentCallId = data.call_id;
@@ -648,6 +674,11 @@
                         message: cleanMessage
                     })
                 });
+                
+                if (!response.ok) {
+                    const errText = await response.text();
+                    throw new Error(`HTTP ${response.status}: ${errText.substring(0, 100)}`);
+                }
                 
                 const data = await response.json();
                 
@@ -781,6 +812,10 @@
         function endCall() {
             updateStatus('Call ended - Ready to start a new call');
 
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+            }
+
             if (isListening && recognition) {
                 try {
                     recognition.stop();
@@ -809,6 +844,10 @@
             messageDiv.innerHTML = `<strong>${sender === 'agent' ? '🤖 Agent' : '👤 You'}:</strong> ${text}`;
             chatMessages.appendChild(messageDiv);
             chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            if (sender === 'agent') {
+                speakAgentText(text);
+            }
         }
         
         function clearChatHistory() {
