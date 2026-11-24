@@ -17,13 +17,13 @@ Traditional sales chatbots often feel rigid or introduce awkward delays. Voxen s
 ## 💎 Key Capabilities
 
 ### 🎙️ Bidirectional Voice Engine
+* **Hybrid Dual-Layer STT**: Browser-native **Web Speech API (`en-IN` locale)** for client-side, zero-latency Roman-script Hinglish transcription, backed by Python **SpeechRecognition (Google Engine)** for headless CLI simulations.
 * **Acoustic Noise Calibration**: Automatic ambient noise adjustment to ensure clear speech capture even in noisy room environments.
-* **Speech-to-Text (STT)**: Direct microphone streaming via Google Speech Recognition with configurable timeout and phrase limits.
 * **Speech Synthesis (TTS)**: High-fidelity natural voice audio synthesis with automatic audio playback management.
 
 ### 🧠 Dual Intelligence Architecture
-* **Semantic RAG Pipeline**: Powered by LangChain and FAISS with `all-MiniLM-L6-v2` embeddings. Pulls targeted course/product information dynamically to answer specific prospect queries.
-* **Groq LPU Acceleration**: Utilizes high-throughput `llama3-8b-8192` for rapid, context-rich reasoning and concise responses (under 4 sentences) tuned for conversational cadence.
+* **Semantic RAG Pipeline**: Powered by LangChain and FAISS with `all-MiniLM-L6-v2` embeddings. Pulls verified TVS Motors specs (`tvs_bike_info.txt`) dynamically to answer prospect queries without hallucinations.
+* **Groq LPU Acceleration**: Utilizes high-throughput **`qwen/qwen3.8-27b`** for ultra-fast, context-rich reasoning and concise voice responses (strictly 1–2 sentences, under 22 words) tuned for conversational phone cadence.
 * **Tactical Fallback Rules**: Deterministic rule-based objection handler for high-frequency objections (pricing concerns, schedule limitations, skepticism, and graceful call terminations).
 
 ### 🖥️ Modern Command Dashboard
@@ -80,7 +80,7 @@ python eval_voxen.py --compare results_v1.csv results_v2.csv
                  ▼                              ▼
   ┌──────────────────────────────┐ ┌────────────────────────────┐
   │   FAISS Vector Retrieval     │ │ Objection Resolution Logic │
-  │   + Groq Llama-3 Inference   │ │  (Guaranteed Response Set) │
+  │   + Groq Qwen-3.8 Inference  │ │  (Guaranteed Response Set) │
   └──────────────┬───────────────┘ └────────────┬───────────────┘
                  │ Generated Sales Script       │
                  └───────────────┬──────────────┘
@@ -103,9 +103,9 @@ python eval_voxen.py --compare results_v1.csv results_v2.csv
 | Layer | Technologies |
 |---|---|
 | **API & Server** | FastAPI, Uvicorn, Pydantic |
-| **LLM Inference** | Groq (`llama3-8b-8192`), LangChain |
+| **LLM Inference** | Groq (`qwen/qwen3.8-27b`), LangChain |
 | **Vector Search & RAG** | FAISS (CPU), Sentence-Transformers (`all-MiniLM-L6-v2`) |
-| **Audio & Speech** | SpeechRecognition, gTTS, PyAudio, Pygame Mixer |
+| **Audio & Speech** | Web Speech API (`en-IN`), SpeechRecognition, gTTS, Pygame Mixer |
 | **Frontend Console** | Vanilla HTML5, Modern CSS3 (Dark / Sky Blue), JavaScript (ES6+) |
 
 ---
@@ -185,17 +185,17 @@ Initiates a new voice session and generates a welcome greeting.
   ```
 
 ### `POST /respond-rag/{call_id}`
-Sends customer input through the knowledge-base RAG chain powered by Groq Llama-3.
+Sends customer input through the knowledge-base RAG chain powered by Groq Qwen-3.8.
 * **Request Body:**
   ```json
   {
-    "message": "What topics are covered in the machine learning modules?"
+    "message": "Raider 125 ka mileage aur price range kya hai?"
   }
   ```
 * **Response:**
   ```json
   {
-    "reply": "Our curriculum covers AI/ML foundations, deep learning, computer vision, and LLMs...",
+    "reply": "Raider 125 ka mileage lagbhag 56.7 km per litre hai aur price 90,000 se start hota hai. Kya aap test ride lena chahenge?",
     "should_end_call": false
   }
   ```
