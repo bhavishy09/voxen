@@ -3,6 +3,19 @@
 > **An intelligent, low-latency voice conversational agent for automated sales outreach and lead qualification.**  
 > Built by **Bhavishya**
 
+[![Watch Demo Video](https://img.shields.io/badge/▶_Watch_Demo_Video-Google_Drive-4285F4?style=for-the-badge&logo=googledrive&logoColor=white)](https://drive.google.com/file/d/16U1vL70WIzRiPWmgfcFyDr60SLQDGjj8/view?usp=sharing)
+[![Python 3.10+](https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.104+-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
+[![Groq LPU](https://img.shields.io/badge/Groq-Qwen_3.8_27B-F55036?style=for-the-badge&logo=fastly&logoColor=white)](https://groq.com/)
+
+---
+
+## 🎬 Live Product Demo
+
+> 📺 **Click below to watch the full live walkthrough of Voxen handling real-time customer voice conversations, vehicle qualification, and test ride bookings:**
+>
+> 👉 **[Watch Voxen Demo Video (Google Drive)](https://drive.google.com/file/d/16U1vL70WIzRiPWmgfcFyDr60SLQDGjj8/view?usp=sharing)**
+
 ---
 
 ## ⚡ Overview
