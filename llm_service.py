@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# Try to import LangChain components with better error handling
+LANGCHAIN_IMPORT_ERROR = None
 try:
     from langchain_text_splitters import RecursiveCharacterTextSplitter
     from langchain_community.embeddings import HuggingFaceEmbeddings
@@ -18,8 +18,9 @@ try:
     
     LANGCHAIN_AVAILABLE = True
     print(" LangChain components imported successfully")
-except ImportError as e:
+except Exception as e:
     LANGCHAIN_AVAILABLE = False
+    LANGCHAIN_IMPORT_ERROR = str(e)
     print(f" LangChain not available: {e}")
 
 
@@ -140,7 +141,7 @@ class LLMService:
                 print(f" RAG system failed to initialize: {e}")
                 print("Falling back to rule-based responses")
         else:
-            self.rag_error = "LangChain packages not installed"
+            self.rag_error = f"LangChain packages not available: {LANGCHAIN_IMPORT_ERROR}"
 
     def _setup_rag_system(self):
         """Setup RAG system with TVS Motors knowledge base"""
