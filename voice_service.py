@@ -7,7 +7,10 @@ import speech_recognition as sr
 class VoiceService:
     def __init__(self):
         # Initialize pygame mixer for audio playback
-        pygame.mixer.init()
+        try:
+            pygame.mixer.init()
+        except Exception as e:
+            print(f" Pygame mixer not available (headless cloud environment): {e}")
         
         # Initialize speech recognition
         self.recognizer = sr.Recognizer()
