@@ -45,9 +45,6 @@ async def start_call(call_data: CallStart):
     )
     
     calls_db[call_id] = call
-    # Play the first message
-    if not voice_service.text_to_speech(first_message):
-        voice_service.fallback_tts(first_message)
     return {
         "call_id": call_id,
         "message": f"Calling {call_data.customer_name}...",
@@ -87,9 +84,6 @@ async def respond_to_call(call_id: str, response: CallResponse):
     
     if should_end:
         call.is_active = False
-    
-    # Play AI response
-    voice_service.text_to_speech(ai_reply)
     
     return {
         "reply": ai_reply,
@@ -137,9 +131,6 @@ async def respond_to_call_rag(call_id: str, response: CallResponse):
     
     if should_end:
         call.is_active = False
-    
-    # Play AI response
-    voice_service.text_to_speech(ai_reply)
     
     return {
         "reply": ai_reply,
@@ -265,9 +256,6 @@ async def rag_respond_to_call(call_id: str, response: CallResponse):
     if should_end:
         call.is_active = False
         call.end_time = datetime.now()
-    
-    # Play AI response
-    voice_service.text_to_speech(ai_reply)
     
     return {
         "reply": ai_reply,
