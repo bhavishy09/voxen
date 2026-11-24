@@ -14,7 +14,7 @@ LANGCHAIN_IMPORT_ERROR = None
 try:
     from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
     from langchain_groq import ChatGroq
-    from langchain.schema import Document
+    from langchain_core.documents import Document
     LANGCHAIN_AVAILABLE = True
     print(" LangChain Core & Groq imported successfully")
 except Exception as e:
