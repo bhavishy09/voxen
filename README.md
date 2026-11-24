@@ -110,18 +110,19 @@ python eval_voxen.py --compare results_v1.csv results_v2.csv
 
 ---
 
-## 🚀 Quick Setup Guide
+## 🚀 Quick Setup Guide (Run Locally)
 
-### 1. Prerequisites
-* **Python**: Version 3.8 to 3.11 installed on your system.
-* **Groq API Key**: Obtain a free API key from [Groq Console](https://console.groq.com/).
-* **Audio Hardware**: Working microphone and speakers / headphones.
+Follow these simple steps to clone and run Voxen on your local machine:
 
-### 2. Prepare Environment
-Open your terminal in the `voxen` directory:
-
+### 1. Clone the Repository
 ```bash
-# Create a virtual environment
+git clone https://github.com/bhavishy09/voxen.git
+cd voxen
+```
+
+### 2. Prepare Virtual Environment
+```bash
+# Create virtual environment
 python -m venv venv
 
 # Activate virtual environment
@@ -139,25 +140,56 @@ pip install -r requirements.txt
 > **Note for macOS / Linux users**: If you encounter issues installing `pyaudio`, ensure development tools and `portaudio` are available (`brew install portaudio` on macOS, or `sudo apt install portaudio19-dev` on Ubuntu/Debian).
 
 ### 4. Configure Credentials
-Create a `.env` file in the project root:
+Create a `.env` file in the project root with your free Groq API key:
 
 ```bash
 GROQ_API_KEY=your_actual_groq_api_key_here
 ```
+*(Get a free API key at [console.groq.com](https://console.groq.com/))*
 
 ### 5. Launch the Server
-You can launch Voxen directly with Python:
+
+Choose your preferred execution mode:
+
+* **Normal Voice Mode (With bot voice speaking aloud):**
+  ```bash
+  python -m uvicorn main:app --host 127.0.0.1 --port 8000
+  ```
+* **Silent Mode (Muted speaker output, best if listening to music or testing):**
+  ```bash
+  DISABLE_TTS=true python -m uvicorn main:app --host 127.0.0.1 --port 8000
+  ```
+
+*(On Windows, you can also double-click `start.bat`)*
+
+### 6. Open the Web Dashboard
+1. Open **Google Chrome** (recommended for native Web Speech API microphone support).
+2. Navigate to:
+   ```
+   http://localhost:8000
+   ```
+3. Enter any sample lead info (e.g., Name: `Rahul Sharma`, Phone: `+91 9876543210`) and click **Start Call**.
+4. Click **Allow** for microphone access.
+5. Talk to Voxen or type your query:
+   * *"Jupiter 125 ka mileage aur price kya hai?"*
+   * *"Mujhe Raider ki test ride chahiye kal subah."*
+   * *"Showroom timings kya hain?"*
+
+---
+
+### 🧪 Running Tests & Benchmarks
+
+With the server running on port 8000, open a second terminal window to run:
 
 ```bash
-python -m uvicorn main:app --reload --host 0.0.0.0 --port 8000
-```
+# 1. View benchmark comparison (v1 vs v2)
+python eval_voxen.py --compare results_v1.csv results_v2.csv
 
-*(On Windows, you can also double-click or run `start.bat`)*
+# 2. Test API endpoints
+python test_api.py
 
-### 6. Access the Dashboard
-Open your browser and navigate to:
-```
-http://localhost:8000
+# 3. Run a fresh 61-test evaluation suite
+DISABLE_TTS=true python eval_voxen.py --label my_run
 ```
 
 ---
